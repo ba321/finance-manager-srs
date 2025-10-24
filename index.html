@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Личный финансовый менеджер</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Личный финансовый менеджер</h1>
+
+    <div class="stats">
+      <div><strong>Баланс:</strong> <span id="balance">0</span> ₽</div>
+      <div><strong>Доходы:</strong> <span id="income">0</span> ₽</div>
+      <div><strong>Расходы:</strong> <span id="expense">0</span> ₽</div>
+    </div>
+
+    <div class="input-section">
+      <input type="date" id="dateInput" />
+      <select id="typeInput">
+        <option value="income">Доход</option>
+        <option value="expense">Расход</option>
+      </select>
+      <input type="number" id="amountInput" placeholder="Сумма" min="0" step="0.01" />
+      <input type="text" id="categoryInput" placeholder="Категория (например, Зарплата/Еда)" />
+      <input type="text" id="noteInput" placeholder="Комментарий (необязательно)" />
+      <button id="addBtn" type="button">Добавить</button>
+    </div>
+
+    <ul id="entryList" class="entry-list"></ul>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
