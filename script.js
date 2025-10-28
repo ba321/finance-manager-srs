@@ -1,3 +1,4 @@
+// CI test: auto run
 function addTransaction() {
   const typeSelect = document.getElementById('type');
   const descInput = document.getElementById('description');
