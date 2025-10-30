@@ -26,7 +26,6 @@ function addTransaction() {
   amountInput.value = "";
   descInput.focus();
 
-
   updateBalance();
 }
 
@@ -41,4 +40,39 @@ function updateBalance() {
     if (li.classList.contains('expense')) balance -= amount;
   });
   document.getElementById('balance').textContent = balance.toFixed(2);
+}
+
+
+// ===============================================
+// Фильтрация и сортировка финансовых записей
+// ===============================================
+
+function filterAndSortTransactions(criteria) {
+  const transactions = document.querySelectorAll('#transactions li');
+  let sorted = Array.from(transactions);
+
+  console.log("Фильтрация и сортировка по критерию:", criteria);
+
+  // Пример сортировки по сумме
+  if (criteria === 'amount') {
+    sorted.sort((a, b) => {
+      const getAmount = el => {
+        const match = el.textContent.match(/(\d+(?:\.\d+)?)/);
+        return match ? parseFloat(match[1]) : 0;
+      };
+      return getAmount(a) - getAmount(b);
+    });
+  }
+
+  // Можно добавить фильтрацию по типу: доход/расход
+  if (criteria === 'income') {
+    sorted = sorted.filter(el => el.classList.contains('income'));
+  } else if (criteria === 'expense') {
+    sorted = sorted.filter(el => el.classList.contains('expense'));
+  }
+
+  // Перерисовываем список (демонстрационная логика)
+  const list = document.getElementById('transactions');
+  list.innerHTML = "";
+  sorted.forEach(el => list.appendChild(el));
 }
