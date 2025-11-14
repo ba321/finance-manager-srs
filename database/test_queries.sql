@@ -21,12 +21,11 @@ SELECT
     t.date,
     t.description
 FROM Transactions t
-JOIN Users u ON u.user_id = t.user_id
 JOIN Accounts a ON a.account_id = t.account_id
-JOIN Categories c ON c.category_id = t.category_id;
+JOIN Users u ON u.user_id = a.user_id       -- заменено: определяем пользователя через счёт
+LEFT JOIN Categories c ON c.category_id = t.category_id;
 
--- 5. Проверим каскадное удаление (для демонстрации)
--- (удалим пользователя и посмотрим, удалятся ли его счета и транзакции)
+-- 5. Проверим каскадное удаление (удалим пользователя и его данные)
 DELETE FROM Users WHERE user_id = 1;
 
 -- 6. Проверим, что данные действительно удалились
