@@ -22,18 +22,18 @@ CREATE TABLE Categories (
     description TEXT
 );
 
+-- Основные финансовые операции
 CREATE TABLE Transactions (
     transaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
     amount REAL NOT NULL,
     description TEXT,
-    date TEXT DEFAULT (datetime('now')),
-    user_id INTEGER NOT NULL,
-    category_id INTEGER NOT NULL,
-    account_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES Categories(category_id) ON DELETE SET NULL,
-    FOREIGN KEY (account_id) REFERENCES Accounts(account_id) ON DELETE CASCADE
+    date TEXT,
+    account_id INTEGER NOT NULL,      -- операция привязана к счёту
+    category_id INTEGER,              -- необязательная категория
+    FOREIGN KEY (account_id) REFERENCES Accounts(account_id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES Categories(category_id) ON DELETE SET NULL
 );
+
 
 -- Индексы для ускорения выборок
 CREATE INDEX idx_transactions_user_id ON Transactions(user_id);
