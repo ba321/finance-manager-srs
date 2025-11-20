@@ -1,0 +1,133 @@
+@startuml Daily_Workflow_Sequence
+
+actor "Пользователь" as User
+participant "UI" as UI
+participant "Контроллер" as Controller
+participant "Сервис задач" as TaskService
+participant "Сервис категорий" as CategoryService
+participant "База данных" as DB
+
+== Утренний запуск ==
+User -> UI: Открывает приложение
+activate User
+activate UI
+
+UI -> Controller: GET /api/tasks (initial load)
+activate Controller
+
+Controller -> TaskService: getAllTasks()
+activate TaskService
+
+TaskService -> DB: SELECT * FROM Tasks
+activate DB
+DB --> TaskService: tasks_list
+deactivate DB
+
+TaskService --> Controller: formatted_tasks
+deactivate TaskService
+
+Controller --> UI: 200 OK\n{tasks}
+deactivate Controller
+
+UI -> UI: Отображает список задач\n(сортировка по приоритету)
+deactivate UI
+deactivate User
+
+== Добавление новой задачи ==
+User -> UI: Вводит новую задачу
+activate User
+activate UI
+
+UI -> Controller: POST /api/tasks {title, priority}
+activate Controller
+
+Controller -> TaskService: createTask()
+activate TaskService
+
+TaskService -> TaskService: validateTaskData()
+alt Данные корректные
+    TaskService -> DB: INSERT INTO Tasks
+    activate DB
+    DB --> TaskService: new_task_id
+    deactivate DB
+
+    TaskService --> Controller: success(new_task)
+else Ошибка валидации
+    TaskService --> Controller: error("Неверные данные")
+end
+deactivate TaskService
+
+Controller --> UI: Response
+deactivate Controller
+
+UI -> UI: Обновляет список задач
+UI --> User: Показывает уведомление «Задача добавлена»
+deactivate UI
+deactivate User
+
+== Выполнение задачи ==
+User -> UI: Кликает «Выполнить»
+activate User
+activate UI
+
+UI -> Controller: PATCH /api/tasks/{id} {status: completed}
+activate Controller
+
+Controller -> TaskService: updateTaskStatus()
+activate TaskService
+
+TaskService -> DB: UPDATE Tasks SET status='completed'
+activate DB
+DB --> TaskService: ok
+deactivate DB
+
+TaskService -> TaskService: checkIfAllCompleted()
+alt Все задачи выполнены
+    TaskService -> CategoryService: notifyUser()
+    CategoryService --> TaskService: ok
+end
+
+TaskService --> Controller: success
+deactivate TaskService
+
+Controller --> UI: 200 OK
+deactivate Controller
+
+UI -> UI: Обновляет статус задачи\n(зачеркнуть + серый цвет)
+UI --> User: Показана анимация выполнения
+deactivate UI
+deactivate User
+
+== Фильтрация задач ==
+User -> UI: Выбирает категорию
+activate User
+activate UI
+
+UI -> Controller: GET /api/tasks?category=ID
+activate Controller
+
+Controller -> TaskService: getTasksByCategory()
+activate TaskService
+
+TaskService -> DB: SELECT ... WHERE category_id = ID
+activate DB
+DB --> TaskService: filtered_list
+deactivate DB
+
+TaskService --> Controller: filtered_list
+deactivate TaskService
+
+Controller --> UI: filtered tasks
+deactivate Controller
+
+UI -> UI: Отображает\nотфильтрованные задачи
+UI --> User: Список обновлён
+deactivate UI
+deactivate User
+
+== Завершение дня ==
+User -> UI: Закрывает приложение
+UI -> UI: Автосохранение состояния
+UI --> User: Приложение закрыто
+
+@enduml
