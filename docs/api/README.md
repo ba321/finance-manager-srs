@@ -1,192 +1,136 @@
-FinanceManager API Documentation
-Mock Server URL
+# FinanceManager API Documentation
 
+## Mock Server URL
 https://44605cef-1355-42be-a214-442382b62e91.mock.pstmn.io
 
-Endpoints
-Authentication
+---
 
-POST /auth/login — авторизация пользователя
+# Endpoints
 
-Transactions
+## Auth
+POST /auth/login — авторизация
 
-GET /transactions — получить все транзакции
+## Transactions
+GET /transactions — получить все  
+POST /transactions — создать  
+PATCH /transactions/:id — обновить  
+DELETE /transactions/:id — удалить  
 
-POST /transactions — создать транзакцию
+## Categories
+GET /categories — получить категории
 
-PATCH /transactions/:id — обновить транзакцию
+---
 
-DELETE /transactions/:id — удалить транзакцию
+# Examples
 
-Categories
+## Auth — Login (Success)
 
-GET /categories — получить список категорий
-
-Examples
-AUTHENTICATION
-Success — Login
-
-URL:
+URL:  
 {{base_url}}/auth/login?username=ab
 
-Request body:
-
-{
-  "email": "ab",
-  "password": "123"
-}
-
+Request:
+email: ab  
+password: 123
 
 Response:
+token: mock_token_123  
+user_id: 1  
+email: ab@example.com  
+message: Login successful
 
-{
-  "token": "mock_token_123",
-  "user_id": 1,
-  "email": "ab@example.com",
-  "message": "Login successful"
-}
+---
 
-AUTHENTICATION — ERROR
+## Auth — Error (Invalid Credentials)
 
-Invalid Credentials
-
-URL:
+URL:  
 {{base_url}}/auth/login?username=ab1
 
 Response:
+error: Invalid username or password
 
-{
-  "error": "Invalid username or password"
-}
+---
 
-TRANSACTIONS — GET ALL
-Success — With Data
+# Transactions — Get All
 
-URL:
+## Success — With Data
+
+URL:  
 {{base_url}}/transactions?type=all
 
 Response:
+transactions:
+- id: 1  
+  title: Покупка продуктов  
+  amount: 1250.50  
+  type: expense  
+  category_id: 2  
+  date: 2025-11-29  
 
-{
-  "transactions": [
-    {
-      "id": 1,
-      "title": "Покупка продуктов",
-      "amount": 1250.50,
-      "type": "expense",
-      "category_id": 2,
-      "date": "2025-11-29"
-    },
-    {
-      "id": 2,
-      "title": "Зарплата",
-      "amount": 86000,
-      "type": "income",
-      "category_id": 1,
-      "date": "2025-11-28"
-    }
-  ]
-}
+- id: 2  
+  title: Зарплата  
+  amount: 86000  
+  type: income  
+  category_id: 1  
+  date: 2025-11-28  
 
-Success — Empty
+### Empty Response
+transactions: []
 
-URL:
-{{base_url}}/transactions?type=all
+---
 
-Response:
+# Transactions — Create
 
-{
-  "transactions": []
-}
-
-TRANSACTIONS — CREATE
-Success — Created
-
-URL:
-{{base_url}}/transactions
+URL:  
+{{base_url}}/transactions  
 
 Response (201):
+transaction_id: 3  
+message: Transaction created successfully
 
-{
-  "transaction_id": 3,
-  "message": "Transaction created successfully"
-}
+### Error — Validation Failed
+error: validation failed  
+details:  
+title: Title is required
 
-Error — Validation Failed
+---
 
-URL:
-{{base_url}}/transactions
+# Transactions — Update
 
-Response (400):
-
-{
-  "error": "validation failed",
-  "details": {
-    "title": "Title is required"
-  }
-}
-
-TRANSACTIONS — UPDATE
-Success
-
-URL:
+URL:  
 {{base_url}}/transactions/{{transaction_id}}
 
 Response:
+transaction_id: 3  
+updated: true  
+message: Transaction updated successfully
 
-{
-  "transaction_id": 3,
-  "updated": true,
-  "message": "Transaction updated successfully"
-}
+### Error — Not Found
+error: Transaction not found
 
-Error — Not Found
+---
 
-URL:
-{{base_url}}/transactions/999
+# Transactions — Delete
 
-Response (404):
-
-{
-  "error": "Transaction not found"
-}
-
-TRANSACTIONS — DELETE
-Success
-
-URL:
+URL:  
 {{base_url}}/transactions/{{transaction_id}}
 
 Response:
+transaction_id: 3  
+deleted: true  
+message: Transaction deleted successfully
 
-{
-  "transaction_id": 3,
-  "deleted": true,
-  "message": "Transaction deleted successfully"
-}
+### Error — Not Found
+error: Transaction not found  
+message: Unable to delete: ID does not exist
 
-Error — Not Found
+---
 
-URL:
-{{base_url}}/transactions/999
+# Categories — Get All
 
-Response (404):
-
-{
-  "error": "Transaction not found",
-  "message": "Unable to delete: ID does not exist"
-}
-
-CATEGORIES
-Success — Get Categories
-
-URL:
+URL:  
 {{base_url}}/categories
 
 Response:
-
-[
-  { "id": 1, "name": "Продукты" },
-  { "id": 2, "name": "Транспорт" },
-  { "id": 3, "name": "Подписки" }
-]
+- id: 1, name: Продукты  
+- id: 2, name: Транспорт  
+- id: 3, name: Подписки  
