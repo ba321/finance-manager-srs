@@ -1,0 +1,40 @@
+{
+	"id": "680f64f1-04ee-426a-9447-ad9a597b66dc",
+	"name": "FinanceManager Mock Server",
+	"values": [
+		{
+			"key": "base_url",
+			"value": "https://44605cef-1355-42be-a214-442382b62e91.mock.pstmn.io",
+			"type": "text",
+			"enabled": true
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "user_email",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "transaction_id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		}
+	],
+	"color": null,
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2025-11-30T01:03:06.749Z",
+	"_postman_exported_using": "Postman/11.73.5"
+}

@@ -1,0 +1,731 @@
+{
+	"info": {
+		"_postman_id": "5c9c0d87-3f4a-4a78-82f2-725062efc82b",
+		"name": "FinanceManager API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50441975",
+		"_collection_link": "https://martian-robot-557978.postman.co/workspace/287cd389-6a8c-47af-88f5-77fb60631199/collection/50441975-5c9c0d87-3f4a-4a78-82f2-725062efc82b?action=share&source=collection_link&creator=50441975"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Login: status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Login: response has auth token and user_id\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(jsonData).to.have.property(\"token\");\r",
+									"    pm.expect(jsonData).to.have.property(\"user_id\");\r",
+									"    pm.expect(jsonData.user_id).to.be.a(\"number\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Login: save auth data to environment\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.environment.set(\"auth_token\", jsonData.token);\r",
+									"    pm.environment.set(\"user_id\", jsonData.user_id);\r",
+									"    pm.environment.set(\"user_email\", jsonData.email);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"ab@example.com\",\r\n  \"password\": \"123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login?username=ab\n",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "ab\n"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success - Login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"ab\",\r\n  \"password\": \"123\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://44605cef-1355-42be-a214-442382b62e91.mock.pstmn.io/auth/login?username=ab\n",
+									"protocol": "https",
+									"host": [
+										"44605cef-1355-42be-a214-442382b62e91",
+										"mock",
+										"pstmn",
+										"io"
+									],
+									"path": [
+										"auth",
+										"login"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "ab\n"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n  \"token\": \"mock_token_123\",\r\n  \"user_id\": 1,\r\n  \"email\": \"ab@example.com\",\r\n  \"message\": \"Login successful\"\r\n}\r\n"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Transactions",
+			"item": [
+				{
+					"name": "Get All Transactions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Get All Transactions: status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Get All Transactions: response has transactions array\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(jsonData).to.have.property(\"transactions\");\r",
+									"    pm.expect(jsonData.transactions).to.be.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Get All Transactions: save first transaction id\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const list = jsonData.transactions;\r",
+									"\r",
+									"    if (Array.isArray(list) && list.length > 0) {\r",
+									"        const firstId = list[0].id;\r",
+									"        pm.environment.set(\"transaction_id\", firstId);\r",
+									"        console.log(\"Saved transaction_id:\", firstId);\r",
+									"    } else {\r",
+									"        console.log(\"No transactions to save\");\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transactions?type=all\n",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "all\n"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success - With Data",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://44605cef-1355-42be-a214-442382b62e91.mock.pstmn.io/transactions?type=all\n",
+									"protocol": "https",
+									"host": [
+										"44605cef-1355-42be-a214-442382b62e91",
+										"mock",
+										"pstmn",
+										"io"
+									],
+									"path": [
+										"transactions"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "all\n"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n  \"transactions\": [\r\n    {\r\n      \"id\": 1,\r\n      \"title\": \"Покупка продуктов\",\r\n      \"amount\": 1250.50,\r\n      \"type\": \"expense\",\r\n      \"category_id\": 2,\r\n      \"date\": \"2025-11-29\"\r\n    },\r\n    {\r\n      \"id\": 2,\r\n      \"title\": \"Зарплата\",\r\n      \"amount\": 85000,\r\n      \"type\": \"income\",\r\n      \"category_id\": 1,\r\n      \"date\": \"2025-11-28\"\r\n    }\r\n  ]\r\n}\r\n"
+						},
+						{
+							"name": "Success - Empty",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/transactions?type=all\n",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"transactions"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "all\n"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n  \"transactions\": []\r\n}\r\n"
+						}
+					]
+				},
+				{
+					"name": "Create Transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create Transaction: status is 201 or 400\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 400]);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"if (pm.response.code === 201) {\r",
+									"\r",
+									"    pm.test(\"Create Transaction: has transaction_id\", function () {\r",
+									"        const jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData).to.have.property(\"transaction_id\");\r",
+									"        pm.expect(jsonData.transaction_id).to.be.a(\"number\");\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Create Transaction: save transaction_id\", function () {\r",
+									"        const jsonData = pm.response.json();\r",
+									"        pm.environment.set(\"transaction_id\", jsonData.transaction_id);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"if (pm.response.code === 400) {\r",
+									"\r",
+									"    pm.test(\"Create Transaction: validation error format\", function () {\r",
+									"        const jsonData = pm.response.json();\r",
+									"\r",
+									"\r",
+									"        pm.expect(jsonData).to.have.property(\"error\");\r",
+									"        pm.expect(jsonData.error).to.equal(\"Validation failed\"); \r",
+									"\r",
+									"\r",
+									"        pm.expect(jsonData).to.have.property(\"details\");\r",
+									"        pm.expect(jsonData.details).to.be.an(\"object\");\r",
+									"\r",
+									"\r",
+									"        pm.expect(jsonData.details).to.have.property(\"title\");\r",
+									"        pm.expect(jsonData.details.title).to.be.a(\"string\");\r",
+									"    });\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success - Created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"Покупка продуктов\",\r\n  \"amount\": 1250.50,\r\n  \"type\": \"expense\",\r\n  \"category_id\": 2,\r\n  \"date\": \"2025-11-29\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://44605cef-1355-42be-a214-442382b62e91.mock.pstmn.io/transactions",
+									"protocol": "https",
+									"host": [
+										"44605cef-1355-42be-a214-442382b62e91",
+										"mock",
+										"pstmn",
+										"io"
+									],
+									"path": [
+										"transactions"
+									]
+								}
+							},
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n  \"transaction_id\": 3,\r\n  \"message\": \"Transaction created successfully\"\r\n}\r\n"
+						},
+						{
+							"name": "Error - Validation Failed",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"Покупка продуктов\",\r\n  \"amount\": 1250.50,\r\n  \"type\": \"expense\",\r\n  \"category_id\": 2,\r\n  \"date\": \"2025-11-29\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/transactions",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"transactions"
+									]
+								}
+							},
+							"code": 400,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n  \"error\": \"Validation failed\",\r\n  \"details\": {\r\n    \"title\": \"Title is required\"\r\n  }\r\n}\r\n"
+						}
+					]
+				},
+				{
+					"name": "Update Transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Update Transaction: status is 200 or 400\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 400]);\r",
+									"});\r",
+									"\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"\r",
+									"if (pm.response.code === 200) {\r",
+									"\r",
+									"    pm.test(\"Update Transaction: response has updated flag\", function () {\r",
+									"        pm.expect(jsonData).to.have.property(\"updated\");\r",
+									"        pm.expect(jsonData.updated).to.be.a(\"boolean\");\r",
+									"        pm.expect(jsonData.updated).to.eql(true);\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Update Transaction: response has transaction_id\", function () {\r",
+									"        pm.expect(jsonData).to.have.property(\"transaction_id\");\r",
+									"        pm.expect(jsonData.transaction_id).to.be.a(\"number\");\r",
+									"    });\r",
+									"\r",
+									"}\r",
+									"\r",
+									"if (pm.response.code === 400) {\r",
+									"\r",
+									"    pm.test(\"Update Transaction: validation error format is OK\", function () {\r",
+									"        pm.expect(jsonData).to.have.property(\"error\");\r",
+									"        pm.expect(jsonData.error).to.be.a(\"string\");\r",
+									"\r",
+									"        pm.expect(jsonData).to.have.property(\"details\");\r",
+									"        pm.expect(jsonData.details).to.be.an(\"object\");\r",
+									"    });\r",
+									"\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"amount\": 1400.00,\r\n  \"category_id\": 3\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions/{{transaction_id}}\n",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"{{transaction_id}}\n"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"amount\": 1400.00,\r\n  \"category_id\": 3\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://44605cef-1355-42be-a214-442382b62e91.mock.pstmn.io/transactions/\n",
+									"protocol": "https",
+									"host": [
+										"44605cef-1355-42be-a214-442382b62e91",
+										"mock",
+										"pstmn",
+										"io"
+									],
+									"path": [
+										"transactions",
+										"\n"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n  \"transaction_id\": 3,\r\n  \"updated\": true,\r\n  \"message\": \"Transaction updated successfully\"\r\n}\r\n"
+						},
+						{
+							"name": "Error",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"amount\": 1400.00,\r\n  \"category_id\": 3\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/transactions/{{transaction_id}}\n",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"transactions",
+										"{{transaction_id}}\n"
+									]
+								}
+							},
+							"code": 404,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n  \"error\": \"Transaction not found\"\r\n}\r\n"
+						}
+					]
+				},
+				{
+					"name": "Delete Transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Delete Transaction: status is 200 or 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);\r",
+									"});\r",
+									"\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"if (pm.response.code === 200) {\r",
+									"\r",
+									"    pm.test(\"Delete Transaction: response has deleted flag\", function () {\r",
+									"        pm.expect(jsonData).to.have.property(\"deleted\");\r",
+									"        pm.expect(jsonData.deleted).to.be.a(\"boolean\");\r",
+									"        pm.expect(jsonData.deleted).to.eql(true);\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Delete Transaction: response has transaction_id\", function () {\r",
+									"        pm.expect(jsonData).to.have.property(\"transaction_id\");\r",
+									"        pm.expect(jsonData.transaction_id).to.be.a(\"number\");\r",
+									"    });\r",
+									"\r",
+									"}\r",
+									"\r",
+									"if (pm.response.code === 404) {\r",
+									"\r",
+									"    pm.test(\"Delete Transaction: error response format is OK\", function () {\r",
+									"        pm.expect(jsonData).to.have.property(\"error\");\r",
+									"        pm.expect(jsonData.error).to.be.a(\"string\");\r",
+									"    });\r",
+									"\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transactions/{{transaction_id}}\n",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"{{transaction_id}}\n"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "https://44605cef-1355-42be-a214-442382b62e91.mock.pstmn.io/transactions/\n",
+									"protocol": "https",
+									"host": [
+										"44605cef-1355-42be-a214-442382b62e91",
+										"mock",
+										"pstmn",
+										"io"
+									],
+									"path": [
+										"transactions",
+										"\n"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n  \"transaction_id\": 3,\r\n  \"deleted\": true,\r\n  \"message\": \"Transaction deleted successfully\"\r\n}\r\n"
+						},
+						{
+							"name": "Error",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/transactions/{{transaction_id}}\n",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"transactions",
+										"{{transaction_id}}\n"
+									]
+								}
+							},
+							"code": 404,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n  \"error\": \"Transaction not found\",\r\n  \"message\": \"Unable to delete: ID does not exist\"\r\n}\r\n"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Get Categories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Get Categories: status is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Get Categories: response has categories array\", function () {\r",
+									"    const data = pm.response.json();\r",
+									"    pm.expect(data).to.be.an(\"array\");\r",
+									"    pm.expect(data[0]).to.have.property(\"id\");\r",
+									"    pm.expect(data[0]).to.have.property(\"name\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Normal categories",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "/categories\n",
+									"path": [
+										"categories\n"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "[\r\n  { \"id\": 1, \"name\": \"Продукты\" },\r\n  { \"id\": 2, \"name\": \"Транспорт\" },\r\n  { \"id\": 3, \"name\": \"Подписки\" }\r\n]\r\n"
+						}
+					]
+				}
+			]
+		}
+	]
+}
